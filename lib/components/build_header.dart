@@ -12,7 +12,7 @@ class BuildHeader extends StatefulWidget {
 class _BuildHeaderState extends State<BuildHeader> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: kHeaderHeight,
 
       child: Padding(
@@ -20,7 +20,7 @@ class _BuildHeaderState extends State<BuildHeader> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
+            SizedBox(
               width: 300,
               child: FittedBox(
                 fit: BoxFit.fill,

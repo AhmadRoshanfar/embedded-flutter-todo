@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_todo/components/build_dialog_modal.dart';
 import 'package:flutter_todo/components/build_header.dart';
-import 'package:flutter_todo/components/build_snackbar.dart';
 import 'package:flutter_todo/components/build_switch_theme.dart';
 import 'package:flutter_todo/components/build_tab_bar.dart';
 import 'package:flutter_todo/components/build_task_card.dart';
-import 'package:flutter_todo/constants.dart';
 import 'package:flutter_todo/model/task_model.dart';
+import 'package:flutter_todo/provider/task_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,9 +16,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<TaskModel> tasks = [];
   @override
   Widget build(BuildContext context) {
+    List<TaskModel> _tasks = [];
+    _tasks = context.watch<TaskProvider>().tasks;
     return Scaffold(
       body: Column(
         children: [
@@ -26,32 +28,39 @@ class _HomeScreenState extends State<HomeScreen> {
           BuildTabBar(),
           IconButton(
             onPressed: () {
+              // context.read<CaloriesProvider>().resetValues();
               setState(() {
-                tasks.add(
-                  TaskModel(
-                    title: "title",
-                    description: "description",
-                    status: TaskStatus.canceled,
-                    priority: TaskPriority.low,
-                    dueDate: DateTime.now(),
-                    tags: ["tags"],
-                  ),
+                showDialog(
+                  useSafeArea: true,
+                  context: context,
+                  builder: (context) {
+                    return const Align(
+                      alignment: Alignment.topCenter,
+                      child: BuildDialogModal(),
+                    );
+                  },
                 );
               });
-              showInfoSnackbar(context, "message");
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (context) => const SelectCaloriesScreen()));
             },
             icon: Icon(Icons.add),
           ),
-          (tasks.isNotEmpty)
+          (_tasks.isNotEmpty)
               ? Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
-                  height: 500,
-                  child: ListView.builder(
-                    itemCount: tasks.length,
-                    itemBuilder: (context, index) {
-                      return BuildTaskCard(task: tasks[index]);
-                    },
+                  height: 300,
+                  child: SingleChildScrollView(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _tasks.length,
+                      itemBuilder: (context, index) {
+                        return BuildTaskCard(task: _tasks[index]);
+                      },
+                    ),
                   ),
                 ),
               )

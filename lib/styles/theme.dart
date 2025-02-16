@@ -14,7 +14,7 @@ ThemeData selectTheme({required bool isLight}) {
           ? const Color.fromARGB(255, 228, 228, 228)
           : const Color.fromARGB(255, 6, 2, 34);
 
-  Color kCardBgColor = isLight ? Colors.white : Colors.red;
+  Color kCardBgColor = isLight ? Colors.white : Colors.black;
   /* Floating Button Colors */
   Color kFloatingButtonColor =
       isLight
@@ -65,7 +65,7 @@ ThemeData selectTheme({required bool isLight}) {
   InputDecorationTheme intputDecorationTheme = InputDecorationTheme(
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
     filled: true,
-    fillColor: Colors.grey.withOpacity(0.1),
+    fillColor: Colors.grey,
     hoverColor: kInputFieldHoverColor,
   );
 

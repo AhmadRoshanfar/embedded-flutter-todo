@@ -1,6 +1,7 @@
 // import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_todo/provider/task_provider.dart';
 import 'package:flutter_todo/provider/theme_provider.dart';
 import 'package:flutter_todo/screens/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,10 @@ void main() async {
   // }
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ThemeProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => TaskProvider()),
+      ],
       child: const MainApp(),
     ),
   );
