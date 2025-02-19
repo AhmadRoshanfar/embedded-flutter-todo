@@ -7,7 +7,6 @@ import 'package:flutter_todo/constants.dart';
 import 'package:flutter_todo/model/task_model.dart';
 import 'package:flutter_todo/provider/task_provider.dart';
 import 'package:flutter_todo/styles/styles.dart';
-import 'package:intl/intl.dart' as intl;
 import 'package:provider/provider.dart';
 
 class BuildDialogModal extends StatefulWidget {
@@ -31,12 +30,9 @@ class _BuildDialogModalState extends State<BuildDialogModal> {
 
     var titleField = Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: BuildInputField(
-          isEnabled: true,
           label: "Title:",
-          keyboardType: TextInputType.text,
-          suffixIcon: const Icon(Icons.scale),
           onSaved: (value) {
             setState(() {
               enteredTitle = value!;
@@ -48,12 +44,9 @@ class _BuildDialogModalState extends State<BuildDialogModal> {
 
     var descriptionField = Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: BuildInputField(
-          isEnabled: true,
-          suffixIcon: const Icon(Icons.height_outlined),
           label: "Description:",
-          keyboardType: TextInputType.text,
           onSaved: (value) {
             setState(() {
               enteredDescription = value!;
@@ -67,10 +60,7 @@ class _BuildDialogModalState extends State<BuildDialogModal> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18.0),
         child: BuildInputField(
-          isEnabled: true,
-          suffixIcon: const Icon(Icons.height_outlined),
           label: "Tags:",
-          keyboardType: TextInputType.text,
           onSaved: (value) {
             setState(() {
               enteredTags = value!.split(",");
@@ -85,50 +75,57 @@ class _BuildDialogModalState extends State<BuildDialogModal> {
       elevation: 4,
       scrollable: true,
       content: SizedBox(
-        height: height / 2,
+        height: height - 100,
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 28.0),
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Text("New Task", style: kTextHeaderStyle),
               ),
               titleField,
               descriptionField,
               tagsField,
-              BuildChipsSelection(
-                onSelectionChanged: (priority) {
-                  setState(() {
-                    enteredPriority = priority;
-                  });
-                },
+              Expanded(
+                child: BuildChipsSelection(
+                  onSelectionChanged: (priority) {
+                    setState(() {
+                      enteredPriority = priority;
+                    });
+                  },
+                ),
               ),
-              DatePicker(
-                onSelectionChanged: (newDate) {
-                  enteredDate = newDate;
-                },
+              Expanded(
+                child: DatePicker(
+                  onSelectionChanged: (newDate) {
+                    enteredDate = newDate;
+                  },
+                ),
               ),
-              IconButton(
-                onPressed: () {
-                  // if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  setState(() {
-                    TaskModel task = TaskModel(
-                      title: enteredTitle,
-                      description: enteredDescription,
-                      status: TaskStatus.canceled,
-                      priority: enteredPriority,
-                      dueDate: enteredDate,
-                      tags: enteredTags,
-                    );
-                    context.read<TaskProvider>().setTask(task: task);
-                    showInfoSnackbar(context, "message");
-                    Navigator.pop(context);
-                  });
-                },
-                icon: Icon(Icons.check),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () {
+                    // if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    setState(() {
+                      TaskModel task = TaskModel(
+                        title: enteredTitle,
+                        description: enteredDescription,
+                        status: TaskStatus.canceled,
+                        priority: enteredPriority,
+                        dueDate: enteredDate,
+                        tags: enteredTags,
+                      );
+                      context.read<TaskProvider>().addTask(task: task);
+                      showInfoSnackbar(context, "message");
+                      Navigator.pop(context);
+                    });
+                  },
+                  label: Text("Add"),
+                  icon: Icon(Icons.check, size: 30),
+                ),
               ),
             ],
           ),

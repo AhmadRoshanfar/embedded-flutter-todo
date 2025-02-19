@@ -39,14 +39,6 @@ ThemeData selectTheme({required bool isLight}) {
           ? const Color.fromARGB(255, 32, 169, 96)
           : const Color.fromARGB(255, 237, 210, 7);
 
-  Color kDataTableBgColor =
-      isLight
-          ? const Color.fromARGB(255, 174, 171, 171)
-          : const Color.fromARGB(255, 11, 25, 47);
-  Color kDataTableBgHoverColor =
-      isLight
-          ? const Color.fromARGB(255, 90, 154, 93)
-          : const Color.fromARGB(255, 171, 181, 197);
   Color kDataTableHeaderBgColor =
       isLight
           ? const Color.fromARGB(255, 196, 164, 117)
@@ -146,7 +138,6 @@ ThemeData selectTheme({required bool isLight}) {
     indicatorShape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(5),
     ),
-    // indicatorShape: //TODO: Change Shape,
     labelType: NavigationRailLabelType.all,
 
     selectedIconTheme: IconThemeData(color: kIconButtonColor, size: 30),
@@ -175,7 +166,7 @@ ThemeData selectTheme({required bool isLight}) {
     elevatedButtonTheme: elevationButtonTheme,
     iconButtonTheme: iconButtonTheme,
     textTheme: textTheme,
-    inputDecorationTheme: intputDecorationTheme,
+    // inputDecorationTheme: intputDecorationTheme,
     dataTableTheme: dataTableTheme,
     scaffoldBackgroundColor: kScaffoldBgColor,
     navigationRailTheme: navigationRailTheme,

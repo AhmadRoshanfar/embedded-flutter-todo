@@ -35,10 +35,11 @@ class _BuildDigitalClockState extends State<BuildDigitalClock> {
       child: Text(
         _time,
         style: TextStyle(
-          fontSize: 40,
+          fontSize: 30,
           fontWeight: FontWeight.bold,
           color: Colors.white,
           fontFamily: 'Courier',
+          letterSpacing: 10,
         ),
       ),
     );

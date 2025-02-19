@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BuildInputField extends StatefulWidget {
   final String label;
   final Function(String?) onSaved;
+  final String? Function(String?)? validator;
   final TextInputType keyboardType;
-  final Widget suffixIcon;
-  final bool isEnabled;
-  final bool? isObsecure;
+  final bool isPassword;
+
   const BuildInputField({
     super.key,
     required this.label,
     required this.onSaved,
-    required this.keyboardType,
-    required this.isEnabled,
-    required this.suffixIcon,
-    this.isObsecure,
+    this.validator,
+    this.keyboardType = TextInputType.text,
+    this.isPassword = false,
   });
 
   @override
@@ -24,118 +22,105 @@ class BuildInputField extends StatefulWidget {
 }
 
 class _BuildInputFieldState extends State<BuildInputField> {
-  List<TextInputFormatter> formatter = [];
-  final bool _isObscureText = false;
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+  bool _obscureText = true;
+  bool _isFocused = false;
+
   @override
   void initState() {
-    if (widget.keyboardType == TextInputType.number) {
-      formatter = [
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(3),
-      ];
-    } else if (widget.keyboardType == TextInputType.phone) {
-      formatter = [
-        FilteringTextInputFormatter.digitsOnly,
-        LengthLimitingTextInputFormatter(11),
-      ];
-    } else if (widget.keyboardType == TextInputType.name) {
-      formatter = [
-        FilteringTextInputFormatter.allow(RegExp('[a-zA-Z]')),
-        FilteringTextInputFormatter.deny(RegExp(r'[/\\]')),
-      ];
-    } else if (widget.keyboardType == TextInputType.emailAddress) {
-      formatter = [FilteringTextInputFormatter.deny(RegExp(r'[/\\]'))];
-    } else if (widget.keyboardType == TextInputType.visiblePassword) {}
     super.initState();
+    _controller = TextEditingController();
+    _focusNode = FocusNode();
+
+    // Listen to focus changes
+    _focusNode.addListener(() {
+      setState(() {
+        _isFocused = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // height: 100,
       width: MediaQuery.of(context).size.width / 2,
       child: TextFormField(
-        obscureText: widget.isObsecure ?? false,
-        enabled: widget.isEnabled,
+        controller: _controller,
+        focusNode: _focusNode,
+        autofocus: true,
         textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: Color.fromARGB(255, 15, 199, 196),
-          fontSize: 22,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 22),
         decoration: InputDecoration(
-          suffixIcon: Padding(
-            padding: const EdgeInsets.only(right: 15),
-            child: widget.suffixIcon,
+          labelText: widget.label,
+          labelStyle: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: _isFocused ? FontWeight.bold : FontWeight.normal,
+            color:
+                _isFocused
+                    ? Colors.amber
+                    : const Color.fromARGB(255, 255, 255, 255),
           ),
-          suffixIconColor: Colors.white,
-
-          focusColor: Colors.pink,
-          // hoverColor: Colors.green,
-          floatingLabelAlignment: FloatingLabelAlignment.start,
-
-          enabledBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(
-              color: Color.fromARGB(255, 76, 147, 175),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 18,
+            horizontal: 20,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(
+              color: Color(0xFF99C1DE), // Soft blue border
               width: 2,
             ),
           ),
-
-          // errorText: (widget.isValid) ? null : "Must be filled",
-          errorStyle: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
-          errorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red, width: 1),
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ),
-
-          focusedErrorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red, width: 3),
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ),
-          labelText: widget.label,
-          labelStyle: GoogleFonts.montserrat(
-            fontStyle: FontStyle.italic,
-            fontSize: 15,
-            color: const Color.fromARGB(255, 11, 164, 161),
-          ),
-          floatingLabelStyle: const TextStyle(
-            // backgroundColor: Color.fromARGB(255, 30, 113, 187),
-            color: Color.fromARGB(255, 58, 125, 185),
-            letterSpacing: 3,
-            fontSize: 25,
-          ),
-          contentPadding: const EdgeInsets.only(
-            bottom: 20.0,
-            left: 30.0,
-            right: 10.0,
-            top: 20,
-          ),
-          // filled: true,
-          focusedBorder: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(
-              color: Color.fromARGB(255, 76, 147, 175),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(
+              color: Color.fromARGB(
+                255,
+                204,
+                133,
+                0,
+              ), // Bright blue when focused
               width: 3,
             ),
           ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: const BorderSide(color: Colors.red, width: 3),
+          ),
+          suffixIcon:
+              widget.isPassword
+                  ? IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      color:
+                          _isFocused
+                              ? const Color(0xFF007BFF)
+                              : const Color(0xFF888888),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                  : null,
         ),
+        obscureText: widget.isPassword ? _obscureText : false,
         onSaved: widget.onSaved,
+        validator: widget.validator,
         keyboardType: widget.keyboardType,
-        inputFormatters: formatter,
-        validator: (value) {
-          if (widget.isEnabled && (value == null || value.isEmpty)) {
-            return 'Please enter a valid ${widget.label.split(":")[0]}';
-          }
-          if (widget.keyboardType == TextInputType.emailAddress) {
-            if (value!.length > 5 && !value.contains("@")) {
-              return "Email must contain @";
-            }
-          }
-          return null;
-        },
       ),
     );
   }

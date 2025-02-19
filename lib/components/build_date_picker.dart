@@ -14,14 +14,14 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       mainAxisSize: MainAxisSize.min,
       spacing: 20,
       children: <Widget>[
         Text(
           selectedDate != null
               ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-              : 'No date selected',
+              : 'Today',
         ),
         OutlinedButton(
           onPressed: () async {
@@ -31,7 +31,6 @@ class _DatePickerState extends State<DatePicker> {
               firstDate: DateTime(2025),
               lastDate: DateTime(2050),
             );
-
             setState(() {
               widget.onSelectionChanged(selectedDate!);
             });
